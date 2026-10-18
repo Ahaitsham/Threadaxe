@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THREADAXE | Printed tees and hoodies</title>
+<meta name="description" content="Printed tees and hoodies, made and shipped across India.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== DESIGN TOKENS (edit here; later move to tokens.css) ===== */
+:root{
+  --ink:#000; --paper:#fff;
+  --g90:#1a1a1a; --g60:#595959; --g30:#b3b3b3; --g10:#ececec; --g05:#f5f5f5;
+  --font-display:"Syne","Helvetica Neue",Arial,sans-serif;
+  --font-body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --line:1px solid var(--g10);
+  --pad:clamp(16px,4vw,48px);
+  --ease:.25s ease;
+}
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:400 15px/1.55 var(--font-body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+ul{list-style:none;margin:0;padding:0}
+h1,h2,h3,p{margin:0}
+svg{display:block}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{padding-inline:var(--pad);max-width:1440px;margin-inline:auto}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+
+/* ===== TOGGLES (CSS-only drawers) ===== */
+.toggle{position:fixed;opacity:0;pointer-events:none}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:opacity var(--ease),visibility var(--ease);z-index:40;cursor:pointer}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(86vw,380px);background:var(--paper);transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.7,.2,1);z-index:50;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}
+#menu:checked ~ .overlay-menu,#cart:checked ~ .overlay-cart{opacity:1;visibility:visible}
+#menu:checked ~ .drawer-menu,#cart:checked ~ .drawer-cart{transform:none}
+body:has(.toggle:checked){overflow:hidden}
+.toggle:focus-visible ~ header label[for]{outline:0}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:var(--line);font:600 15px var(--font-display)}
+.close{cursor:pointer;width:40px;height:40px;display:grid;place-items:center;margin-right:-10px}
+
+/* ===== ANNOUNCEMENT + HEADER ===== */
+.notice{background:var(--ink);color:var(--paper);text-align:center;font-size:13px;padding:9px var(--pad)}
+header.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:var(--line)}
+.bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+.logo{font:800 22px/1 var(--font-display);letter-spacing:-.02em}
+.nav-desktop{display:none;gap:28px;font-size:14px}
+.nav-desktop a{padding:4px 0;border-bottom:1px solid transparent;transition:border-color var(--ease)}
+.nav-desktop a:hover{border-color:var(--ink)}
+.icons{display:flex;justify-content:flex-end;gap:2px}
+.ib{width:42px;height:42px;display:grid;place-items:center;cursor:pointer;position:relative;background:none;border:0;color:inherit}
+.ib svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6}
+.count{position:absolute;top:4px;right:2px;background:var(--ink);color:var(--paper);font-size:10px;font-weight:600;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center}
+.burger{justify-self:start;margin-left:-10px}
+.search-wrap{display:none}
+@media (min-width:900px){
+  .burger{display:none}
+  .nav-desktop{display:flex}
+  .bar{grid-template-columns:auto 1fr auto;gap:40px}
+  .nav-desktop{justify-self:center}
+}
+
+/* ===== MENU DRAWER ===== */
+.mnav{padding:8px 24px 32px}
+.mnav > a,.mnav summary{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:var(--line);font:600 20px var(--font-display);cursor:pointer;list-style:none}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav summary::after{content:"+";font:400 22px var(--font-body);transition:transform var(--ease)}
+.mnav details[open] summary::after{transform:rotate(45deg)}
+.mnav details ul{padding:6px 0 14px}
+.mnav details li a{display:block;padding:8px 0;color:var(--g60);font-size:15px}
+.mnav details li a:hover{color:var(--ink)}
+.mfoot{margin-top:auto;padding:20px 24px;border-top:var(--line);font-size:13px;color:var(--g60);display:grid;gap:6px}
+
+/* ===== CART DRAWER ===== */
+.line-item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;padding:18px 24px;border-bottom:var(--line);font-size:14px}
+.line-item .thumb{width:64px;aspect-ratio:4/5;background:var(--g05)}
+.line-item small{color:var(--g60);display:block}
+.cart-foot{margin-top:auto;padding:20px 24px;border-top:var(--line);display:grid;gap:12px}
+.cart-foot .row{display:flex;justify-content:space-between;font-weight:600}
+.cart-foot small{color:var(--g60)}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;justify-content:center;align-items:center;height:48px;padding:0 28px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:500 14px var(--font-body);cursor:pointer;transition:background var(--ease),color var(--ease)}
+.btn:hover{background:var(--paper);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.btn.block{width:100%}
+
+/* ===== HERO (the one bold moment: oversized wordmark) ===== */
+.hero{border-bottom:var(--line);overflow:hidden}
+.hero-grid{display:grid;gap:28px;padding-block:40px 36px}
+.hero-word{font:800 clamp(52px,17.2vw,232px)/.82 var(--font-display);letter-spacing:-.05em;margin-left:-.04em}
+.hero-word span{display:block}
+.hero-word .out{color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+.hero-side{display:grid;gap:20px;align-content:end;max-width:420px}
+.hero-side p{font-size:17px;line-height:1.45}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+.hero-art{background:var(--g05);aspect-ratio:16/10;display:grid;place-items:center;border:var(--line)}
+.hero-art svg{width:min(46%,260px);height:auto}
+@media (min-width:900px){
+  .hero-grid{grid-template-columns:1.5fr 1fr;align-items:end;padding-block:64px 56px}
+  .hero-art{grid-column:2;grid-row:1 / span 2;aspect-ratio:auto;min-height:100%}
+  .hero-word{grid-column:1}
+  .hero-side{grid-column:1}
+}
+
+/* ===== SECTIONS ===== */
+section.s{padding-block:clamp(40px,7vw,88px)}
+.s-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:22px}
+.s-head h2{font:800 clamp(24px,4vw,38px)/1 var(--font-display);letter-spacing:-.03em}
+.s-head a{font-size:14px;border-bottom:1px solid var(--ink);padding-bottom:1px;white-space:nowrap}
+
+/* ===== COLLECTIONS ===== */
+.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.col{position:relative;aspect-ratio:1;background:var(--g10);display:flex;align-items:flex-end;padding:14px;overflow:hidden;transition:background var(--ease),color var(--ease)}
+.col svg{position:absolute;inset:14% 14% 28%;width:72%;height:auto;margin:auto;opacity:.9;transition:transform .5s ease}
+.col b{position:relative;font:800 20px/1 var(--font-display);letter-spacing:-.02em}
+.col small{position:relative;margin-left:auto;font-size:13px}
+.col:hover{background:var(--ink);color:var(--paper)}
+.col:hover svg{transform:scale(1.06)}
+.col:nth-child(2){background:var(--g30)}
+.col:nth-child(3){background:var(--g05)}
+.col:nth-child(4){background:var(--g60);color:var(--paper)}
+@media (min-width:760px){.cols{grid-template-columns:repeat(4,1fr)}}
+
+/* ===== PRODUCT GRID (2 / 3 / 4 columns, compact cards) ===== */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px 10px}
+@media (min-width:640px){.grid{grid-template-columns:repeat(3,1fr);gap:28px 14px}}
+@media (min-width:1024px){.grid{grid-template-columns:repeat(4,1fr);gap:32px 16px}}
+.card{display:block}
+.card .img{position:relative;aspect-ratio:4/5;background:var(--g05);display:grid;place-items:center;overflow:hidden}
+.card .img svg{width:62%;height:auto;transition:transform .4s ease}
+.card:hover .img svg{transform:scale(1.05)}
+.card .tag{position:absolute;top:8px;left:8px;background:var(--ink);color:var(--paper);font-size:11px;padding:2px 7px}
+.card .tag.light{background:var(--paper);color:var(--ink)}
+.card .wish{position:absolute;top:4px;right:4px;width:32px;height:32px;display:grid;place-items:center;opacity:0;transition:opacity var(--ease)}
+.card .wish svg{width:17px;fill:none;stroke:var(--ink);stroke-width:1.6}
+.card:hover .wish,.card:focus-visible .wish{opacity:1}
+.card h3{font:500 13px/1.35 var(--font-body);margin-top:9px}
+.price{font-size:13px;margin-top:2px;display:flex;gap:8px}
+.price s{color:var(--g30)}
+.sw{display:flex;gap:4px;margin-top:6px}
+.sw i{width:10px;height:10px;border-radius:50%;border:1px solid var(--g30)}
+@media (hover:none){.card .wish{opacity:1}}
+
+/* ===== BRAND STRIP ===== */
+.strip{background:var(--ink);color:var(--paper)}
+.strip ul{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--g60)}
+.strip li{background:var(--ink);padding:26px 18px}
+.strip b{display:block;font:800 18px/1.1 var(--font-display);letter-spacing:-.02em;margin-bottom:6px}
+.strip span{font-size:13px;color:var(--g30)}
+@media (min-width:900px){.strip ul{grid-template-columns:repeat(4,1fr)}.strip li{padding:40px 28px}}
+
+/* ===== EDITORIAL BAND ===== */
+.band{display:grid;gap:0;border-block:var(--line)}
+.band > div{padding:clamp(28px,5vw,64px) var(--pad)}
+.band h2{font:800 clamp(28px,5vw,56px)/.98 var(--font-display);letter-spacing:-.04em;max-width:14ch}
+.band p{color:var(--g60);max-width:46ch;margin:16px 0 24px}
+.band .fill{background:var(--g05);display:grid;place-items:center;min-height:240px}
+.band .fill svg{width:min(40%,220px);height:auto}
+@media (min-width:900px){.band{grid-template-columns:1fr 1fr}.band .fill{min-height:420px;order:2}}
+
+/* ===== NEWSLETTER + FOOTER ===== */
+.news{display:grid;gap:14px;max-width:460px}
+.news form{display:flex;border-bottom:1px solid var(--ink)}
+.news input{flex:1;border:0;background:none;height:46px;font:inherit;padding:0;min-width:0}
+.news input:focus{outline:0}
+.news button{border:0;background:none;font:600 14px var(--font-body);cursor:pointer;padding:0 0 0 12px}
+footer{padding-block:48px 28px;border-top:var(--line)}
+.f-grid{display:grid;gap:32px;grid-template-columns:repeat(2,1fr)}
+.f-grid > div:first-child{grid-column:1 / -1}
+.f-grid h4{margin:0 0 12px;font:600 14px var(--font-display)}
+.f-grid li{margin-bottom:8px}
+.f-grid li a{color:var(--g60);font-size:14px}
+.f-grid li a:hover{color:var(--ink)}
+.f-bottom{margin-top:40px;padding-top:20px;border-top:var(--line);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:12px;color:var(--g60)}
+@media (min-width:900px){.f-grid{grid-template-columns:1.6fr 1fr 1fr 1fr}.f-grid > div:first-child{grid-column:auto}}
+</style>
+</head>
+<body>
+
+<!-- Reusable garment shapes. Fill is set by currentColor on each use. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="tee" viewBox="0 0 120 120"><path fill="currentColor" d="M40 8 22 16 4 38l16 12 8-6v68h64V44l8 6 16-12-18-22-18-8c-3 8-10 12-20 12S43 16 40 8Z"/><path fill="none" stroke="rgba(128,128,128,.35)" d="M40 8c3 8 10 12 20 12s17-4 20-12"/></symbol>
+  <symbol id="hood" viewBox="0 0 120 120"><path fill="currentColor" d="M42 6c-4 6-6 10-6 14L14 30 2 100h20l6-44v60h64V56l6 44h20L106 30 84 20c0-4-2-8-6-14-4 12-12 16-18 16S46 18 42 6Z"/><path fill="none" stroke="rgba(128,128,128,.4)" d="M36 20c6 14 14 22 24 22s18-8 24-22M52 56v22M68 56v22"/></symbol>
+  <symbol id="print" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 3 3 21h18L12 3Z"/></symbol>
+</svg>
+
+<!-- Drawer state toggles -->
+<input type="checkbox" id="menu" class="toggle" aria-label="Toggle menu">
+<input type="checkbox" id="cart" class="toggle" aria-label="Toggle cart">
+<label for="menu" class="overlay overlay-menu" aria-hidden="true"></label>
+<label for="cart" class="overlay overlay-cart" aria-hidden="true"></label>
+
+<!-- MENU DRAWER (slides in from the right) -->
+<aside class="drawer drawer-menu" aria-label="Main menu">
+  <div class="drawer-head"><span>Menu</span>
+    <label for="menu" class="close" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l14 14M17 3 3 17"/></svg></label>
+  </div>
+  <nav class="mnav">
+    <a href="#new">New arrivals</a>
+    <details open><summary>Tees</summary><ul>
+      <li><a href="#">All tees</a></li><li><a href="#">Graphic tees</a></li><li><a href="#">Oversized tees</a></li><li><a href="#">Plain essentials</a></li></ul></details>
+    <details><summary>Hoodies</summary><ul>
+      <li><a href="#">All hoodies</a></li><li><a href="#">Pullover</a></li><li><a href="#">Zip-up</a></li></ul></details>
+    <a href="#best">Best sellers</a>
+    <a href="#">Sale</a>
+    <a href="#">Track order</a>
+  </nav>
+  <div class="mfoot"><a href="#">Account</a><a href="#">Wishlist</a><a href="#">Help and FAQ</a></div>
+</aside>
+
+<!-- CART DRAWER -->
+<aside class="drawer drawer-cart" aria-label="Shopping cart">
+  <div class="drawer-head"><span>Cart (2)</span>
+    <label for="cart" class="close" aria-label="Close cart"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l14 14M17 3 3 17"/></svg></label>
+  </div>
+  <div class="line-item"><div class="thumb" style="color:#fff;display:grid;place-items:center"><svg width="44" height="44"><use href="#tee"/></svg></div><div>Axe Mark Tee<small>Black / M · Qty 1</small></div><div>₹999</div></div>
+  <div class="line-item"><div class="thumb" style="color:#1a1a1a;display:grid;place-items:center"><svg width="44" height="44"><use href="#hood"/></svg></div><div>Heavy Hoodie<small>Grey / L · Qty 1</small></div><div>₹1,899</div></div>
+  <div class="cart-foot">
+    <div class="row"><span>Subtotal</span><span>₹2,898</span></div>
+    <small>Shipping and COD options are shown at checkout. Free shipping above ₹1,999.</small>
+    <a class="btn block" href="#">Checkout</a>
+    <a class="btn ghost block" href="#">View cart</a>
+  </div>
+</aside>
+
+<div class="notice">Free shipping above ₹1,999 · Cash on delivery on select items</div>
+
+<header class="top">
+  <div class="wrap bar">
+    <label for="menu" class="ib burger" role="button" aria-label="Open menu"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg></label>
+    <a href="#" class="logo" aria-label="THREADAXE home">THREADAXE</a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <a href="#new">New</a><a href="#">Tees</a><a href="#">Hoodies</a><a href="#best">Best sellers</a><a href="#">About</a>
+    </nav>
+    <div class="icons">
+      <a class="ib" href="#" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></a>
+      <a class="ib" href="#" aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></a>
+      <label for="cart" class="ib" role="button" aria-label="Open cart"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="count">2</span></label>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <h1 class="hero-word" aria-label="THREADAXE"><span>THREAD</span><span class="out">AXE</span></h1>
+      <div class="hero-side">
+        <p>Printed tees and hoodies, cut heavy and made to last. New drop is live.</p>
+        <div class="hero-cta"><a class="btn" href="#new">Shop new arrivals</a><a class="btn ghost" href="#best">Best sellers</a></div>
+      </div>
+      <div class="hero-art" style="color:#000"><svg viewBox="0 0 120 120" role="img" aria-label="Featured black tee"><use href="#tee"/></svg></div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section class="s">
+    <div class="wrap">
+      <div class="s-head"><h2>Collections</h2><a href="#">View all</a></div>
+      <div class="cols">
+        <a class="col" href="#"><svg viewBox="0 0 120 120" style="color:#000"><use href="#tee"/></svg><b>Tees</b><small>24</small></a>
+        <a class="col" href="#"><svg viewBox="0 0 120 120" style="color:#fff"><use href="#hood"/></svg><b>Hoodies</b><small>12</small></a>
+        <a class="col" href="#"><svg viewBox="0 0 120 120" style="color:#b3b3b3"><use href="#tee"/></svg><b>Oversized</b><small>9</small></a>
+        <a class="col" href="#"><svg viewBox="0 0 120 120" style="color:#000"><use href="#hood"/></svg><b>Sale</b><small>7</small></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW ARRIVALS -->
+  <section class="s" id="new" style="padding-top:0">
+    <div class="wrap">
+      <div class="s-head"><h2>New arrivals</h2><a href="#">Shop all</a></div>
+      <div class="grid">
+        <a class="card" href="#"><div class="img" style="color:#000"><span class="tag">New</span><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Axe Mark Tee</h3><div class="price">₹999</div><div class="sw"><i style="background:#000"></i><i style="background:#fff"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#fff"><span class="tag">New</span><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Split Thread Tee</h3><div class="price">₹1,099</div><div class="sw"><i style="background:#fff"></i><i style="background:#000"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#595959"><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#hood"/></svg></div><h3>Heavy Hoodie</h3><div class="price">₹1,899 <s>₹2,299</s></div><div class="sw"><i style="background:#595959"></i><i style="background:#000"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#1a1a1a"><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Oversized Drop Tee</h3><div class="price">₹1,199</div><div class="sw"><i style="background:#1a1a1a"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#b3b3b3"><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#hood"/></svg></div><h3>Zip Hoodie</h3><div class="price">₹2,099</div><div class="sw"><i style="background:#b3b3b3"></i><i style="background:#000"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#000"><span class="tag light">Few left</span><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Blade Script Tee</h3><div class="price">₹899 <s>₹1,199</s></div><div class="sw"><i style="background:#000"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#fff"><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#hood"/></svg></div><h3>Stitch Hoodie</h3><div class="price">₹1,999</div><div class="sw"><i style="background:#fff"></i></div></a>
+        <a class="card" href="#"><div class="img" style="color:#595959"><span class="wish"><svg viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11Z"/></svg></span><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Pocket Tee</h3><div class="price">₹849</div><div class="sw"><i style="background:#595959"></i><i style="background:#fff"></i></div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDITORIAL BAND -->
+  <div class="band">
+    <div class="fill" style="color:#000"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#hood"/></svg></div>
+    <div>
+      <h2>Heavy cotton. Sharp prints.</h2>
+      <p>Every piece is printed in small batches on a thick, soft base so the graphics stay crisp wash after wash.</p>
+      <a class="btn" href="#">Shop hoodies</a>
+    </div>
+  </div>
+
+  <!-- BEST SELLERS -->
+  <section class="s" id="best">
+    <div class="wrap">
+      <div class="s-head"><h2>Best sellers</h2><a href="#">Shop all</a></div>
+      <div class="grid">
+        <a class="card" href="#"><div class="img" style="color:#000"><span class="tag">Best seller</span><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Axe Mark Tee</h3><div class="price">₹999</div></a>
+        <a class="card" href="#"><div class="img" style="color:#1a1a1a"><span class="tag">Best seller</span><svg viewBox="0 0 120 120"><use href="#hood"/></svg></div><h3>Heavy Hoodie</h3><div class="price">₹1,899 <s>₹2,299</s></div></a>
+        <a class="card" href="#"><div class="img" style="color:#fff"><svg viewBox="0 0 120 120"><use href="#tee"/></svg></div><h3>Split Thread Tee</h3><div class="price">₹1,099</div></a>
+        <a class="card" href="#"><div class="img" style="color:#b3b3b3"><svg viewBox="0 0 120 120"><use href="#hood"/></svg></div><h3>Zip Hoodie</h3><div class="price">₹2,099</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRAND STRIP -->
+  <div class="strip">
+    <ul>
+      <li><b>Ships across India</b><span>Delivery in 3 to 7 days</span></li>
+      <li><b>Cash on delivery</b><span>Available on select items</span></li>
+      <li><b>Easy returns</b><span>7 days, no questions</span></li>
+      <li><b>Secure payment</b><span>UPI, cards and netbanking</span></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="news">
+        <a href="#" class="logo">THREADAXE</a>
+        <p style="color:var(--g60);font-size:14px">Get first access to new drops.</p>
+        <form onsubmit="return false"><label class="sr" for="em">Email address</label><input id="em" type="email" placeholder="Email address"><button type="button">Subscribe</button></form>
+      </div>
+      <div><h4>Shop</h4><ul><li><a href="#new">New arrivals</a></li><li><a href="#">Tees</a></li><li><a href="#">Hoodies</a></li><li><a href="#">Sale</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="#">Track order</a></li><li><a href="#">Shipping</a></li><li><a href="#">Returns and refunds</a></li><li><a href="#">FAQ</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Terms of service</a></li><li><a href="#">Instagram</a></li></ul></div>
+    </div>
+    <div class="f-bottom"><span>© 2026 THREADAXE. All rights reserved.</span><span>threadaxe.com</span></div>
+  </div>
+</footer>
+
+</body>
+</html>
